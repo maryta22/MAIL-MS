@@ -1,0 +1,163 @@
+openapi: 3.0.0
+info:
+  title: Sending API
+  description: API for sending individual and bulk messages
+  contact:
+    name: API Support
+    email: support@example.com
+  version: "1.0"
+servers:
+- url: http://localhost:8080
+  description: Local development server
+- url: https://api.sending.com
+  description: Production server
+paths:
+  /send/individual:
+    post:
+      tags:
+      - Sending
+      summary: Send an individual message
+      operationId: send_individual_message
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/send_individual_body'
+        required: true
+      responses:
+        "200":
+          description: Successful sending
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
+      x-openapi-router-controller: swagger_server.controllers.sending_controller
+  /send/bulk:
+    post:
+      tags:
+      - Sending
+      summary: Send a message to multiple recipients
+      operationId: send_bulk_message
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/send_bulk_body'
+        required: true
+      responses:
+        "200":
+          description: Successful bulk sending
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_1'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400_1'
+      x-openapi-router-controller: swagger_server.controllers.sending_controller
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error description
+          example: Bad request
+    SendResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Sending status
+          example: Message sent successfully
+        send_id:
+          type: string
+          description: Unique identifier for the message
+          example: "12345"
+    send_individual_body:
+      required:
+      - message
+      - recipient
+      type: object
+      properties:
+        recipient:
+          type: string
+          description: Recipient address
+          example: user@example.com
+        message:
+          type: string
+          description: Message content
+          example: "Hello, this is a test message"
+    inline_response_200:
+      type: object
+      properties:
+        status:
+          type: string
+          example: Message sent successfully
+        send_id:
+          type: string
+          description: Unique identifier for the message
+          example: "12345"
+      example:
+        send_id: "12345"
+        status: Message sent successfully
+    inline_response_400:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Invalid recipient
+    send_bulk_body:
+      required:
+      - message
+      - recipients
+      type: object
+      properties:
+        recipients:
+          type: array
+          description: List of recipient addresses
+          example:
+          - user1@example.com
+          - user2@example.com
+          items:
+            type: string
+        message:
+          type: string
+          description: Message content
+          example: "Hello everyone, this is a test message"
+    inline_response_200_1:
+      type: object
+      properties:
+        status:
+          type: string
+          example: Messages sent successfully
+        send_ids:
+          type: array
+          description: List of unique identifiers for the messages
+          example:
+          - "12345"
+          - "12346"
+          items:
+            type: string
+      example:
+        send_ids:
+        - "12345"
+        - "12346"
+        status: Messages sent successfully
+    inline_response_400_1:
+      type: object
+      properties:
+        error:
+          type: string
+          example: At least one recipient is invalid
+
