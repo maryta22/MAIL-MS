@@ -15,9 +15,10 @@ paths:
   /send/individual:
     post:
       tags:
-      - Sending
+        - Sending
       summary: Send an individual message
       operationId: send_individual_message
+      x-openapi-router-controller: swagger_server.controllers.sending_controller
       requestBody:
         content:
           application/json:
@@ -37,13 +38,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/inline_response_400'
-      x-openapi-router-controller: swagger_server.controllers.sending_controller
+
   /send/bulk:
     post:
       tags:
       - Sending
       summary: Send a message to multiple recipients
       operationId: send_bulk_message
+      x-openapi-router-controller: swagger_server.controllers.sending_controller
       requestBody:
         content:
           application/json:
@@ -63,7 +65,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/inline_response_400_1'
-      x-openapi-router-controller: swagger_server.controllers.sending_controller
 components:
   schemas:
     ErrorResponse:
@@ -160,4 +161,3 @@ components:
         error:
           type: string
           example: At least one recipient is invalid
-
