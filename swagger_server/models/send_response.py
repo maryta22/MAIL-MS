@@ -49,7 +49,6 @@ class SendResponse(Model):
     def status(self) -> str:
         """Gets the status of this SendResponse.
 
-        Sending status  # noqa: E501
 
         :return: The status of this SendResponse.
         :rtype: str
@@ -60,7 +59,6 @@ class SendResponse(Model):
     def status(self, status: str):
         """Sets the status of this SendResponse.
 
-        Sending status  # noqa: E501
 
         :param status: The status of this SendResponse.
         :type status: str
@@ -72,7 +70,7 @@ class SendResponse(Model):
     def send_id(self) -> str:
         """Gets the send_id of this SendResponse.
 
-        Unique identifier for the message  # noqa: E501
+        Unique identifier for the sent message  # noqa: E501
 
         :return: The send_id of this SendResponse.
         :rtype: str
@@ -83,7 +81,7 @@ class SendResponse(Model):
     def send_id(self, send_id: str):
         """Sets the send_id of this SendResponse.
 
-        Unique identifier for the message  # noqa: E501
+        Unique identifier for the sent message  # noqa: E501
 
         :param send_id: The send_id of this SendResponse.
         :type send_id: str

@@ -1,11 +1,12 @@
 openapi: 3.0.0
 info:
   title: Sending API
-  description: API for sending individual and bulk messages
+  description: "API for sending individual and bulk messages, and managing messages\
+    \ efficiently."
   contact:
     name: API Support
     email: support@example.com
-  version: "1.0"
+  version: "1.1"
 servers:
 - url: http://localhost:8080
   description: Local development server
@@ -15,149 +16,79 @@ paths:
   /send/individual:
     post:
       tags:
-        - Sending
-      summary: Send an individual message
-      operationId: send_individual_message
-      x-openapi-router-controller: swagger_server.controllers.sending_controller
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/send_individual_body'
-        required: true
-      responses:
-        "200":
-          description: Successful sending
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_200'
-        "400":
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-
-  /send/bulk:
-    post:
-      tags:
       - Sending
-      summary: Send a message to multiple recipients
-      operationId: send_bulk_message
-      x-openapi-router-controller: swagger_server.controllers.sending_controller
+      summary: Send an individual message
+      description: Sends a personalized message to a single recipient.
+      operationId: send_individual_message
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/send_bulk_body'
+              $ref: '#/components/schemas/SendIndividualRequest'
         required: true
       responses:
         "200":
-          description: Successful bulk sending
+          description: Message sent successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_1'
+                $ref: '#/components/schemas/SendResponse'
         "400":
-          description: Bad request
+          description: Invalid input or missing fields
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_400_1'
+                $ref: '#/components/schemas/ErrorResponse'
+      x-openapi-router-controller: swagger_server.controllers.sending_controller
 components:
   schemas:
-    ErrorResponse:
+    SendIndividualRequest:
+      required:
+      - message
+      - sender_email
+      - sender_name
+      - subject
+      - to_email
+      - to_name
       type: object
       properties:
-        error:
+        to_email:
           type: string
-          description: Error description
-          example: Bad request
+          description: Email address of the recipient
+          format: email
+        to_name:
+          type: string
+          description: Name of the recipient
+        message:
+          type: string
+          description: Content of the message
+        sender_email:
+          type: string
+          description: Sender's email address
+          format: email
+        sender_name:
+          type: string
+          description: Name of the sender
+        subject:
+          type: string
+          description: Subject of the email
     SendResponse:
       type: object
       properties:
         status:
           type: string
-          description: Sending status
           example: Message sent successfully
         send_id:
           type: string
-          description: Unique identifier for the message
-          example: "12345"
-    send_individual_body:
-      required:
-      - message
-      - recipient
-      type: object
-      properties:
-        recipient:
-          type: string
-          description: Recipient address
-          example: user@example.com
-        message:
-          type: string
-          description: Message content
-          example: "Hello, this is a test message"
-    inline_response_200:
-      type: object
-      properties:
-        status:
-          type: string
-          example: Message sent successfully
-        send_id:
-          type: string
-          description: Unique identifier for the message
-          example: "12345"
+          description: Unique identifier for the sent message
       example:
-        send_id: "12345"
+        send_id: send_id
         status: Message sent successfully
-    inline_response_400:
+    ErrorResponse:
       type: object
       properties:
         error:
           type: string
-          example: Invalid recipient
-    send_bulk_body:
-      required:
-      - message
-      - recipients
-      type: object
-      properties:
-        recipients:
-          type: array
-          description: List of recipient addresses
-          example:
-          - user1@example.com
-          - user2@example.com
-          items:
-            type: string
-        message:
-          type: string
-          description: Message content
-          example: "Hello everyone, this is a test message"
-    inline_response_200_1:
-      type: object
-      properties:
-        status:
-          type: string
-          example: Messages sent successfully
-        send_ids:
-          type: array
-          description: List of unique identifiers for the messages
-          example:
-          - "12345"
-          - "12346"
-          items:
-            type: string
-      example:
-        send_ids:
-        - "12345"
-        - "12346"
-        status: Messages sent successfully
-    inline_response_400_1:
-      type: object
-      properties:
-        error:
-          type: string
-          example: At least one recipient is invalid
+          description: Description of the error
+          example: Bad request
+

@@ -44,7 +44,7 @@ class ErrorResponse(Model):
     def error(self) -> str:
         """Gets the error of this ErrorResponse.
 
-        Error description  # noqa: E501
+        Description of the error  # noqa: E501
 
         :return: The error of this ErrorResponse.
         :rtype: str
@@ -55,7 +55,7 @@ class ErrorResponse(Model):
     def error(self, error: str):
         """Sets the error of this ErrorResponse.
 
-        Error description  # noqa: E501
+        Description of the error  # noqa: E501
 
         :param error: The error of this ErrorResponse.
         :type error: str
