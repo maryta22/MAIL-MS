@@ -70,7 +70,7 @@ class SendResponse(Model):
     def send_id(self) -> str:
         """Gets the send_id of this SendResponse.
 
-        Unique identifier for the sent message  # noqa: E501
+        Unique identifier for the bulk email  # noqa: E501
 
         :return: The send_id of this SendResponse.
         :rtype: str
@@ -81,7 +81,7 @@ class SendResponse(Model):
     def send_id(self, send_id: str):
         """Sets the send_id of this SendResponse.
 
-        Unique identifier for the sent message  # noqa: E501
+        Unique identifier for the bulk email  # noqa: E501
 
         :param send_id: The send_id of this SendResponse.
         :type send_id: str

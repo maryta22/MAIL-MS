@@ -1,12 +1,12 @@
 openapi: 3.0.0
 info:
   title: Sending API
-  description: "API for sending individual and bulk messages, and managing messages\
+  description: "API for managing lists, folders, and sending individual and bulk messages\
     \ efficiently."
   contact:
     name: API Support
     email: support@example.com
-  version: "1.1"
+  version: "1.3"
 servers:
 - url: http://localhost:8080
   description: Local development server
@@ -40,8 +40,324 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
       x-openapi-router-controller: swagger_server.controllers.sending_controller
+  /lists:
+    get:
+      tags:
+      - Lists
+      summary: Get all lists
+      description: Retrieves all available lists.
+      operationId: get_all_lists
+      responses:
+        "200":
+          description: Lists retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ListResponse'
+                x-content-type: application/json
+      x-openapi-router-controller: swagger_server.controllers.lists_controller
+    post:
+      tags:
+      - Lists
+      summary: Create a new list
+      description: Creates a new list for storing contacts.
+      operationId: create_list
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateListRequest'
+        required: true
+      responses:
+        "201":
+          description: List created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListResponse'
+        "400":
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-openapi-router-controller: swagger_server.controllers.lists_controller
+  /lists/{list_id}:
+    post:
+      tags:
+      - Lists
+      summary: Add a contact to a list
+      description: Adds a new contact to an existing list.
+      operationId: add_contact_to_list
+      parameters:
+      - name: list_id
+        in: path
+        description: ID of the list to add the contact to
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddContactRequest'
+        required: true
+      responses:
+        "200":
+          description: Contact added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactResponse'
+        "404":
+          description: List not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-openapi-router-controller: swagger_server.controllers.lists_controller
+    delete:
+      tags:
+      - Lists
+      summary: Delete a list
+      description: Deletes a list and all its contacts.
+      operationId: delete_list
+      parameters:
+      - name: list_id
+        in: path
+        description: ID of the list to delete
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: List deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteResponse'
+        "404":
+          description: List not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-openapi-router-controller: swagger_server.controllers.lists_controller
+  /lists/{list_id}/send:
+    post:
+      tags:
+      - Sending
+      summary: Send an email to a list
+      description: Sends a bulk email to all contacts in the specified list.
+      operationId: send_email_to_list
+      parameters:
+      - name: list_id
+        in: path
+        description: ID of the list to send emails to
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendEmailToListRequest'
+        required: true
+      responses:
+        "200":
+          description: Emails sent successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendResponse'
+        "404":
+          description: List not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-openapi-router-controller: swagger_server.controllers.sending_controller
+  /folders:
+    get:
+      tags:
+      - Folders
+      summary: Get all folders
+      description: Retrieves all available folders.
+      operationId: get_all_folders
+      responses:
+        "200":
+          description: Folders retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FolderResponse'
+                x-content-type: application/json
+      x-openapi-router-controller: swagger_server.controllers.folders_controller
+    post:
+      tags:
+      - Folders
+      summary: Create a new folder
+      description: Creates a new folder for grouping lists.
+      operationId: create_folder
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFolderRequest'
+        required: true
+      responses:
+        "201":
+          description: Folder created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FolderResponse'
+        "400":
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-openapi-router-controller: swagger_server.controllers.folders_controller
 components:
   schemas:
+    CreateFolderRequest:
+      required:
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the folder
+    FolderResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique ID of the folder
+        name:
+          type: string
+          description: Name of the folder
+      example:
+        name: name
+        id: id
+    CreateListRequest:
+      required:
+      - folder_id
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the list
+        folder_id:
+          type: string
+          description: ID of the folder where the list will be created
+        emails:
+          type: array
+          description: List of emails to add to the list after creation
+          items:
+            type: string
+            format: email
+    ListResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique ID of the list
+        name:
+          type: string
+          description: Name of the list
+        folder_id:
+          type: string
+          description: ID of the folder where the list belongs
+      example:
+        name: name
+        id: id
+        folder_id: folder_id
+    AddContactRequest:
+      required:
+      - email
+      type: object
+      properties:
+        email:
+          type: string
+          description: Email of the contact
+        name:
+          type: string
+          description: Name of the contact
+    ContactResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique ID of the contact
+        email:
+          type: string
+          description: Email of the contact
+        name:
+          type: string
+          description: Name of the contact
+      example:
+        name: name
+        id: id
+        email: email
+    SendEmailToListRequest:
+      required:
+      - html_content
+      - sender_email
+      - sender_name
+      - subject
+      type: object
+      properties:
+        sender_email:
+          type: string
+          description: Sender's email address
+        sender_name:
+          type: string
+          description: Sender's name
+        subject:
+          type: string
+          description: Subject of the email
+        html_content:
+          type: string
+          description: HTML content of the email
+    SendResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: Emails sent successfully
+        send_id:
+          type: string
+          description: Unique identifier for the bulk email
+      example:
+        send_id: send_id
+        status: Emails sent successfully
+    DeleteResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: Deleted successfully
+      example:
+        status: Deleted successfully
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Description of the error
     SendIndividualRequest:
       required:
       - message
@@ -72,23 +388,4 @@ components:
         subject:
           type: string
           description: Subject of the email
-    SendResponse:
-      type: object
-      properties:
-        status:
-          type: string
-          example: Message sent successfully
-        send_id:
-          type: string
-          description: Unique identifier for the sent message
-      example:
-        send_id: send_id
-        status: Message sent successfully
-    ErrorResponse:
-      type: object
-      properties:
-        error:
-          type: string
-          description: Description of the error
-          example: Bad request
 
