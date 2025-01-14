@@ -8,7 +8,7 @@ info:
     email: support@example.com
   version: "1.3"
 servers:
-- url: http://localhost:8080
+- url: http://localhost:2043
   description: Local development server
 - url: https://api.sending.com
   description: Production server

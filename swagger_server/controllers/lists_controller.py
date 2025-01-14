@@ -293,8 +293,14 @@ def get_all_lists():  # noqa: E501
             raise ValueError(f"Error al obtener las listas: {response.text}")
 
         response_data = response.json()
+
+        # Modificar para incluir folder_id
         lists = [
-            ListResponse(id=str(lista["id"]), name=lista["name"])
+            ListResponse(
+                id=str(lista["id"]),
+                name=lista["name"],
+                folder_id=lista.get("folderId", None)  # Obtener folder_id si está disponible
+            )
             for lista in response_data.get("lists", [])
         ]
 
@@ -302,3 +308,4 @@ def get_all_lists():  # noqa: E501
     except Exception as e:
         print(f"Error al obtener las listas: {e}")
         return JSONEncoder().default(ErrorResponse(error=str(e))), 500
+

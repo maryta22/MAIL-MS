@@ -59,13 +59,15 @@ def send_email_to_list(body, list_id):  # noqa: E501
                 "email": body.sender_email,
                 "name": body.sender_name
             },
+            "to": [{"email": "placeholder@example.com"}],  # Correo ficticio obligatorio para validación
             "subject": body.subject,
             "htmlContent": body.html_content,
-            "listIds": [int(list_id)]  # Enviar directamente a la lista por su ID
+            "listIds": [int(list_id)],  # Enviar directamente a la lista por su ID
         }
 
         # Realizar la solicitud POST
-        response = requests.post(BASE_URL, headers=HEADERS, json=payload)
+        url = "https://api.brevo.com/v3/smtp/email"  # URL para enviar correos masivos
+        response = requests.post(url, headers=HEADERS, json=payload)
         print(f"Respuesta de la API: {response.status_code}, {response.text}")
 
         if response.status_code not in [200, 201]:
