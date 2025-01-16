@@ -4,9 +4,12 @@ from swagger_server.models.create_folder_request import CreateFolderRequest  # n
 from swagger_server.models.error_response import ErrorResponse  # noqa: E501
 from swagger_server.models.folder_response import FolderResponse  # noqa: E501
 from swagger_server.encoder import JSONEncoder
+from dotenv import load_dotenv
+import os
 
-# Configuración de la API
-API_KEY = "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"
+load_dotenv()
+
+API_KEY = os.getenv('TOKEN')
 BASE_URL = "https://api.brevo.com/v3/contacts/folders"
 
 

@@ -10,9 +10,12 @@ from swagger_server.models.error_response import ErrorResponse  # noqa: E501
 from swagger_server.models.send_individual_request import SendIndividualRequest  # noqa: E501
 from swagger_server.models.send_response import SendResponse  # noqa: E501
 from swagger_server import util
+from dotenv import load_dotenv
+import os
 
-# Configuración de la API
-API_KEY = "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"
+load_dotenv()
+
+API_KEY = os.getenv('TOKEN')
 BASE_URL = "https://api.brevo.com/v3/smtp/email"
 HEADERS = {
     "accept": "application/json",
@@ -53,7 +56,7 @@ def send_email_to_list(body, list_id):  # noqa: E501
     try:
         print(f"Enviando email a la lista {list_id}")
 
-        contacts = get_contacts_from_list(list_id)
+        contacts = get_contacts_from_list_method(list_id)
         if not contacts:
             raise ValueError(f"No hay contactos en la lista {list_id} o la lista no existe.")
 
@@ -90,7 +93,7 @@ def send_email_to_list(body, list_id):  # noqa: E501
         return JSONEncoder().default(ErrorResponse(error=str(e))), 500
 
 
-def get_contacts_from_list(list_id):
+def get_contacts_from_list_method(list_id):
     """
     Obtiene los contactos asociados a una lista en Brevo.
     :param list_id: ID de la lista.
@@ -109,5 +112,26 @@ def get_contacts_from_list(list_id):
     except Exception as e:
         print(f"Error al obtener contactos de la lista {list_id}: {e}")
         raise
+
+def get_contacts_from_list(list_id):
+    """
+    Obtiene los contactos asociados a una lista en Brevo.
+    :param list_id: ID de la lista.
+    :return: Lista de contactos (diccionarios con sus atributos).
+    """
+    try:
+        url = f"https://api.brevo.com/v3/contacts/lists/{list_id}/contacts"
+        response = requests.get(url, headers=HEADERS)
+        print(f"Respuesta al obtener contactos de la lista {list_id}: {response.status_code}, {response.text}")
+
+        if response.status_code != 200:
+            raise ValueError(f"Error al obtener los contactos de la lista {list_id}: {response.text}")
+
+        response_data = response.json()
+        return response_data.get("contacts", [])
+    except Exception as e:
+        print(f"Error al obtener contactos de la lista {list_id}: {e}")
+        return JSONEncoder().default(ErrorResponse(error=str(e))), 500
+
 
 

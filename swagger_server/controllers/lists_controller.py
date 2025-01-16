@@ -7,9 +7,12 @@ from swagger_server.models.contact_response import ContactResponse  # noqa: E501
 from swagger_server.models.create_list_request import CreateListRequest  # noqa: E501
 from swagger_server.models.delete_response import DeleteResponse  # noqa: E501
 from swagger_server.encoder import JSONEncoder
+from dotenv import load_dotenv
+import os
 
-# Configuración de la API
-API_KEY = "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"
+load_dotenv()
+
+API_KEY = os.getenv('TOKEN')
 BASE_URL = "https://api.brevo.com/v3/contacts"
 HEADERS = {
     "accept": "application/json",
