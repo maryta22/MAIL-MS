@@ -2,6 +2,12 @@ from sib_api_v3_sdk import Configuration, ApiClient, ContactsApi, TransactionalE
 from sib_api_v3_sdk.models.create_contact import CreateContact
 from sib_api_v3_sdk.models.update_contact import UpdateContact
 from sib_api_v3_sdk.models.send_smtp_email import SendSmtpEmail
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+API_KEY = os.getenv('TOKEN')
 
 def send_email(to_email, to_name, sender_email, sender_name, subject, html_content, list_ids=None):
     """
@@ -17,9 +23,8 @@ def send_email(to_email, to_name, sender_email, sender_name, subject, html_conte
     :return: Resultado final de creación/actualización y envío del correo.
     """
     # Configuración de la API
-    api_key = "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"
     configuration = Configuration()
-    configuration.api_key["api-key"] = api_key
+    configuration.api_key["api-key"] = API_KEY
 
     # Inicializar clientes de API
     api_client = ApiClient(configuration)
