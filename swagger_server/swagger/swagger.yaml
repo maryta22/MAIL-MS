@@ -1,8 +1,7 @@
 openapi: 3.0.0
 info:
-  title: Sending API
-  description: "API for managing lists, folders, and sending individual and bulk messages\
-    \ efficiently."
+  title: MAIL-MS
+  description: Api de integracion con Brevo para envio de correos
   contact:
     name: API Support
     email: support@example.com
